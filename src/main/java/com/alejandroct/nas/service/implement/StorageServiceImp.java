@@ -9,13 +9,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alejandroct.nas.service.IStorageService;
-
 import jakarta.annotation.PostConstruct;
 
+@Service
 public class StorageServiceImp implements IStorageService{
     
     String root = "src/main/resources/media";
@@ -39,6 +40,7 @@ public class StorageServiceImp implements IStorageService{
             if(fileSize>=maxSize){
                 throw new RuntimeException("File size exceeds limit.");
             }
+
 
             String originalFilename = StringUtils.cleanPath(file.getOriginalFilename());
             String filename = originalFilename;
@@ -79,11 +81,11 @@ public class StorageServiceImp implements IStorageService{
 
     private void initFilesExtension(){
         filesExtension = new HashMap<>();
-        filesExtension.put("/images", "jpg, jpeg, png, gif");
-        filesExtension.put("/music", "mp3, wav, m4a");
-        filesExtension.put("/documents", "pdf, doc, docx, pptx, xlsx, txt");
-        filesExtension.put("/video", "mp4, avi, mkv");
-        filesExtension.put("/other", "");
+        filesExtension.put("images", "jpg, jpeg, png, gif");
+        filesExtension.put("music", "mp3, wav, m4a");
+        filesExtension.put("documents", "pdf, doc, docx, pptx, xlsx, txt");
+        filesExtension.put("video", "mp4, avi, mkv");
+        filesExtension.put("other", "");
     }
 
     private String getFileType(String filename){
