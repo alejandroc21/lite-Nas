@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,7 +27,6 @@ public class StorageServiceImp implements IStorageService{
     @PostConstruct
     public void init(){
         initFilesExtension();
-        
     }
 
     @Override
@@ -41,7 +41,6 @@ public class StorageServiceImp implements IStorageService{
                 throw new RuntimeException("File size exceeds limit.");
             }
 
-
             String originalFilename = StringUtils.cleanPath(file.getOriginalFilename());
             String filename = originalFilename;
             String fileType = getFileType(originalFilename);
@@ -50,7 +49,6 @@ public class StorageServiceImp implements IStorageService{
             Files.createDirectories(destinationDirectory);
 
             //checks if the file exists and appends an incremental number to filename
-
             int counter = 1;
             Path destinationFile = destinationDirectory.resolve(filename).normalize().toAbsolutePath();
             while(Files.exists(destinationFile)){
@@ -67,6 +65,7 @@ public class StorageServiceImp implements IStorageService{
             }
         
             return filename;
+
         } catch (Exception e) {
             throw new RuntimeException("Failed to store file.", e);
         }
@@ -74,10 +73,20 @@ public class StorageServiceImp implements IStorageService{
 
     @Override
     public Resource loadFile(String filename) {
-        throw new UnsupportedOperationException("Unimplemented method 'loadFile'");
-    }
+        try {
+            String fileType = getFileType(filename);
+            Path file = Paths.get(root+"/"+fileType).resolve(filename);
+            Resource resource = new UrlResource(file.toUri());
 
-    
+            if(resource.exists() || resource.isReadable()){
+                return resource;
+            }else{
+                throw new RuntimeException("Could not load file: "+filename);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to load file.");
+        }
+    }
 
     private void initFilesExtension(){
         filesExtension = new HashMap<>();
