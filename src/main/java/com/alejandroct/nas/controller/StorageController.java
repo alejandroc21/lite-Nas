@@ -2,7 +2,9 @@ package com.alejandroct.nas.controller;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -34,6 +36,18 @@ public class StorageController {
         String host = request.getRequestURL().toString().replace(request.getRequestURI(), "");
         String url = ServletUriComponentsBuilder.fromHttpUrl(host).path("/media/").path(path).toUriString();
         return Map.of("url", url);
+    }
+
+    @PostMapping("/multiple")
+    public Map<String, Object> uploadFiles(@RequestParam("files") List<MultipartFile> files) {
+        List<String> paths = storageService.saveMultiFile(files);
+        String host = request.getRequestURL().toString().replace(request.getRequestURI(), "");
+        List<String> urls = paths.stream()
+                .map(path -> ServletUriComponentsBuilder.fromHttpUrl(host).path("/media/").path(path).toUriString())
+                .collect(Collectors.toList());
+
+        Map<String, Object> response = Map.of("urls", urls);
+        return response;
     }
 
     @GetMapping("{filename:.+}")

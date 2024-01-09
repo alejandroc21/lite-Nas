@@ -1,11 +1,14 @@
 package com.alejandroct.nas.service.implement;
 
+import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.core.io.Resource;
@@ -72,6 +75,16 @@ public class StorageServiceImp implements IStorageService{
     }
 
     @Override
+    public List<String> saveMultiFile(List<MultipartFile> files){
+        List<String> filenames = new ArrayList<>();
+
+        for(MultipartFile file: files){
+            filenames.add(saveFile(file));
+        }
+        return filenames;
+    }
+
+    @Override
     public Resource loadFile(String filename) {
         try {
             String fileType = getFileType(filename);
@@ -91,7 +104,7 @@ public class StorageServiceImp implements IStorageService{
     private void initFilesExtension(){
         filesExtension = new HashMap<>();
         filesExtension.put("images", "jpg, jpeg, png, gif");
-        filesExtension.put("music", "mp3, wav, m4a");
+        filesExtension.put("music", "mp3, wav, m4a, mpeg");
         filesExtension.put("documents", "pdf, doc, docx, pptx, xlsx, txt");
         filesExtension.put("video", "mp4, avi, mkv");
         filesExtension.put("other", "");
