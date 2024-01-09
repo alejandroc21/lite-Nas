@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,8 +47,8 @@ public class StorageController {
                 .map(path -> ServletUriComponentsBuilder.fromHttpUrl(host).path("/media/").path(path).toUriString())
                 .collect(Collectors.toList());
 
-        Map<String, Object> response = Map.of("urls", urls);
-        return response;
+        return Map.of("urls", urls);
+
     }
 
     @GetMapping("{filename:.+}")
@@ -55,6 +56,12 @@ public class StorageController {
         Resource file = storageService.loadFile(filename);
         String contentType = Files.probeContentType(file.getFile().toPath());
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, contentType).body(file);
+    }
+
+    @GetMapping("/list/{fileType}")
+    public ResponseEntity<Map<String, List<String>>> listFiles(@PathVariable String fileType){
+        List<String> fileNames = storageService.listFolderFiles(fileType);
+        return ResponseEntity.ok(Map.of("files", fileNames));
     }
 
 }

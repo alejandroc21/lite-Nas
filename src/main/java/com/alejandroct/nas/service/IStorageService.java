@@ -6,6 +6,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface IStorageService {
+    List<String> listFolderFiles(String folderName);
     String saveFile(MultipartFile file);
     List<String> saveMultiFile(List<MultipartFile> files);
     Resource loadFile(String filename);

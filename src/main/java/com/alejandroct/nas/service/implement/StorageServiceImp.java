@@ -1,7 +1,8 @@
 package com.alejandroct.nas.service.implement;
 
-import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -30,6 +31,23 @@ public class StorageServiceImp implements IStorageService{
     @PostConstruct
     public void init(){
         initFilesExtension();
+        createDirectories();
+    }
+
+    @Override
+    public List<String> listFolderFiles(String fileType){
+        List<String> fileNames = new ArrayList<>();
+        Path directory = Paths.get(root).resolve(fileType).normalize().toAbsolutePath();
+        try(DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory)){
+            for(Path path : directoryStream){
+                if(Files.isRegularFile(path)){
+                    fileNames.add(path.getFileName().toString());
+                }
+            }
+        }catch(IOException e){
+            throw new RuntimeException("Could not list files.");
+        }
+        return fileNames;
     }
 
     @Override
@@ -106,8 +124,22 @@ public class StorageServiceImp implements IStorageService{
         filesExtension.put("images", "jpg, jpeg, png, gif");
         filesExtension.put("music", "mp3, wav, m4a, mpeg");
         filesExtension.put("documents", "pdf, doc, docx, pptx, xlsx, txt");
-        filesExtension.put("video", "mp4, avi, mkv");
+        filesExtension.put("videos", "mp4, avi, mkv");
         filesExtension.put("other", "");
+    }
+
+    private void createDirectories(){
+        //This is just a temporal solution, trust me
+        try {
+            
+            Files.createDirectories(Paths.get(root).resolve("images").normalize().toAbsolutePath());
+            Files.createDirectories(Paths.get(root).resolve("music").normalize().toAbsolutePath());
+            Files.createDirectories(Paths.get(root).resolve("videos").normalize().toAbsolutePath());
+            Files.createDirectories(Paths.get(root).resolve("documents").normalize().toAbsolutePath());
+            Files.createDirectories(Paths.get(root).resolve("other").normalize().toAbsolutePath());
+        } catch (Exception e) {
+            throw new RuntimeException("Was not a good idea");
+        }
     }
 
     private String getFileType(String filename){
