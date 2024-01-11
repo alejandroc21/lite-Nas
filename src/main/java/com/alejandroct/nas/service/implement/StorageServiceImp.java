@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.alejandroct.nas.exception.DirectoryNotFoundException;
 import com.alejandroct.nas.service.IStorageService;
 import jakarta.annotation.PostConstruct;
 
@@ -36,8 +37,11 @@ public class StorageServiceImp implements IStorageService{
 
     @Override
     public List<String> listFolderFiles(String fileType){
-        List<String> fileNames = new ArrayList<>();
         Path directory = Paths.get(root).resolve(fileType).normalize().toAbsolutePath();
+        if (!Files.exists(directory)) {
+            throw new DirectoryNotFoundException("Directory does not exist: "+fileType);
+        }
+        List<String> fileNames = new ArrayList<>();
         try(DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory)){
             for(Path path : directoryStream){
                 if(Files.isRegularFile(path)){
@@ -46,6 +50,7 @@ public class StorageServiceImp implements IStorageService{
             }
         }catch(IOException e){
             throw new RuntimeException("Could not list files.");
+            
         }
         return fileNames;
     }
@@ -131,7 +136,6 @@ public class StorageServiceImp implements IStorageService{
     private void createDirectories(){
         //This is just a temporal solution, trust me
         try {
-            
             Files.createDirectories(Paths.get(root).resolve("images").normalize().toAbsolutePath());
             Files.createDirectories(Paths.get(root).resolve("music").normalize().toAbsolutePath());
             Files.createDirectories(Paths.get(root).resolve("videos").normalize().toAbsolutePath());
