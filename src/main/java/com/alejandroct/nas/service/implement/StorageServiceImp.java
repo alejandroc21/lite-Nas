@@ -142,7 +142,7 @@ public class StorageServiceImp implements IStorageService{
             Files.createDirectories(Paths.get(root).resolve("documents").normalize().toAbsolutePath());
             Files.createDirectories(Paths.get(root).resolve("other").normalize().toAbsolutePath());
         } catch (Exception e) {
-            throw new RuntimeException("Was not a good idea");
+            throw new RuntimeException("Failed to create base directories.");
         }
     }
 
