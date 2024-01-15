@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.alejandroct.nas.model.DataFile;
 import com.alejandroct.nas.service.IStorageService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -61,6 +62,11 @@ public class StorageController {
     public ResponseEntity<Map<String, List<String>>> listFiles(@PathVariable String fileType){
         List<String> fileNames = storageService.listFolderFiles(fileType);
         return ResponseEntity.ok(Map.of("files", fileNames));
+    }
+
+    @PostMapping("/obj")
+    public ResponseEntity<DataFile> uploadToObj(@RequestParam("file")MultipartFile multipartFile){
+        return new ResponseEntity<>(storageService.uploadToObj(multipartFile), HttpStatus.OK);
     }
 
 }

@@ -6,56 +6,64 @@ import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Date;
 
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import lombok.Data;
-
-@Data
 public class DataFile {
     private String name;
     private String url;
-    private Resource logo;
+    private String logo;
     private Date creationDate;
     private long bytesSize;
     @JsonIgnore
     private Path path;
+    @JsonIgnore
+    String host = "http://127.0.0.1:8080";
 
     public DataFile(){}
 
     public DataFile(Path path){
         this.path = path;
         this.name = getFileName();
-        this.logo = getLogo();
+        this.url = getFileUrl();
+        this.logo = getLogoIcon();
         this.creationDate = getcreationDate();
-        this.bytesSize = getBytesSize();
+        this.bytesSize = getBytes();
     }
 
     private String getFileName(){
         return path.getFileName().toString();
     }
 
-    private Resource getLogo(){
-        String iconDirectory = "static/image/";
+    private String getFileUrl(){
+        String fileName = path.getFileName().toString();
+        String url = ServletUriComponentsBuilder.fromHttpUrl(host).path("/media/").path(fileName).toUriString();
+        return url;
+    }
+
+    private String getLogoIcon(){
+        //String iconDirectory = "static/image/";
         String pathFile = path.toString();
+        String iconName= "";
         if(pathFile.contains("images/")){
-            iconDirectory+="icon_image.png";            
+            iconName+="icon_image.png";            
         }     
         if(pathFile.contains("documents/")){
-            iconDirectory+="icon_doc.png";            
+            iconName+="icon_doc.png";            
         }
         if(pathFile.contains("music/")){
-            iconDirectory+="icon_music.png";            
+            iconName+="icon_music.png";            
         }
         if(pathFile.contains("videos/")){
-            iconDirectory+="icon_video.png";            
+            iconName+="icon_video.png";            
         }
         if(pathFile.contains("other/")){
-            iconDirectory+="icon_other.png";            
+            iconName+="icon_other.png";            
         }   
-        return new ClassPathResource(iconDirectory);
+        
+        String logoUrl = ServletUriComponentsBuilder.fromHttpUrl(host).path("/media/").path(iconName).toUriString();
+        return logoUrl;
     }
 
     private Date getcreationDate(){
@@ -67,11 +75,31 @@ public class DataFile {
         }
     }
 
-    private long getBytesSize(){
+    private long getBytes(){
         try {
             return Files.size(path);
         } catch (IOException e) {
             return 0;
         }
+    }
+
+    public String getName(){
+        return name;
+    }
+
+    public String getUrl(){
+        return url;
+    }
+
+    public String getLogo(){
+        return logo;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public long getBytesSize(){
+        return bytesSize;
     }
 }

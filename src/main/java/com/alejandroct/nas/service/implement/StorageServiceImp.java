@@ -19,6 +19,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alejandroct.nas.exception.DirectoryNotFoundException;
+import com.alejandroct.nas.model.DataFile;
 import com.alejandroct.nas.service.IStorageService;
 import jakarta.annotation.PostConstruct;
 
@@ -111,7 +112,13 @@ public class StorageServiceImp implements IStorageService{
     public Resource loadFile(String filename) {
         try {
             String fileType = getFileType(filename);
-            Path file = Paths.get(root+"/"+fileType).resolve(filename);
+            Path file;
+
+            if(filename.contains("/icon_")){
+                file = Paths.get("src/main/resources/static/image/").resolve(filename);
+            }else{
+                file = Paths.get(root+"/"+fileType).resolve(filename);
+            }
             Resource resource = new UrlResource(file.toUri());
 
             if(resource.exists() || resource.isReadable()){
@@ -156,6 +163,43 @@ public class StorageServiceImp implements IStorageService{
             }
         }
         return "/other";
+    }
+
+    @Override
+    public DataFile uploadToObj(MultipartFile multipartFile) {
+        if(multipartFile.isEmpty()){
+            throw new RuntimeException("this file is empty");
+        }
+        try{
+            String originalFilename = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+            String filename = originalFilename;
+            String fileType = getFileType(originalFilename);
+
+            Path destinationDirectory = Paths.get(root).resolve(fileType).normalize().toAbsolutePath();
+            Files.createDirectories(destinationDirectory);
+
+            //checks if the file exists and appends an incremental number to filename
+            int counter = 1;
+            Path destinationFile = destinationDirectory.resolve(filename).normalize().toAbsolutePath();
+            while(Files.exists(destinationFile)){
+                int lastDotIndex = originalFilename.lastIndexOf(".");
+                String filenameWithoutExtension = (lastDotIndex != -1) ? originalFilename.substring(0, lastDotIndex) : originalFilename;
+                String fileExtension = (lastDotIndex != -1) ? originalFilename.substring(lastDotIndex) : "";
+                filename = filenameWithoutExtension+"("+counter+")"+fileExtension;
+                destinationFile = destinationDirectory.resolve(filename).normalize().toAbsolutePath();
+                counter++;
+            }
+
+            try(InputStream inputStream = multipartFile.getInputStream()){
+                Files.copy(inputStream, destinationFile, StandardCopyOption.REPLACE_EXISTING);
+            }
+
+            DataFile dataFile = new DataFile(destinationFile);
+            return dataFile;
+        }catch(IOException e){
+            throw new RuntimeException("filed uploadobject function");
+        }
+
     }
     
 }
