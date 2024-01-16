@@ -6,9 +6,11 @@ import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Date;
 
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.servlet.http.HttpServletRequest;
 
 public class DataFile {
     private String name;
@@ -16,10 +18,11 @@ public class DataFile {
     private String logo;
     private Date creationDate;
     private long bytesSize;
-    @JsonIgnore
+
     private Path path;
-    @JsonIgnore
-    String host = "http://127.0.0.1:8080";
+    HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+    String host = request.getRequestURL().toString().replace(request.getRequestURI(), "");
+
 
     public DataFile(){}
 
