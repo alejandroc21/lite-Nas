@@ -37,15 +37,17 @@ public class StorageServiceImp implements IStorageService{
     }
 
     @Override
-    public List<String> listFolderFiles(String fileType){
+    public List<DataFile> listFolderFiles(String fileType){
         Path directory = Paths.get(root).resolve(fileType).normalize().toAbsolutePath();
         if (!Files.exists(directory)) {
             throw new DirectoryNotFoundException("Directory does not exist: "+fileType);
         }
         List<String> fileNames = new ArrayList<>();
+        List<DataFile> dataFiles = new ArrayList<>();
         try(DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory)){
             for(Path path : directoryStream){
                 if(Files.isRegularFile(path)){
+                    dataFiles.add(new DataFile(path));
                     fileNames.add(path.getFileName().toString());
                 }
             }
@@ -53,22 +55,31 @@ public class StorageServiceImp implements IStorageService{
             throw new RuntimeException("Could not list files.");
             
         }
-        return fileNames;
+        return dataFiles;
     }
 
     @Override
-    public String saveFile(MultipartFile file) {
-        try {
-            long fileSize = file.getSize();
-        
-            if(file.isEmpty()){
-                throw new RuntimeException("The file is empty.");
+    public List<DataFile> saveListFiles(List<MultipartFile> files) {
+        List<DataFile> dataFiles = new ArrayList<>();
+        for(MultipartFile file: files){
+            dataFiles.add(saveFile(file));
+        }
+        return dataFiles;
+    }
+
+    public DataFile saveFile(MultipartFile multipartFile) {
+        try{
+            if(multipartFile.isEmpty()){
+                throw new RuntimeException("this file is empty");
             }
+
+            long fileSize = multipartFile.getSize();
+
             if(fileSize>=maxSize){
                 throw new RuntimeException("File size exceeds limit.");
             }
 
-            String originalFilename = StringUtils.cleanPath(file.getOriginalFilename());
+            String originalFilename = StringUtils.cleanPath(multipartFile.getOriginalFilename());
             String filename = originalFilename;
             String fileType = getFileType(originalFilename);
 
@@ -87,25 +98,15 @@ public class StorageServiceImp implements IStorageService{
                 counter++;
             }
 
-            try(InputStream inputStream = file.getInputStream()){
+            try(InputStream inputStream = multipartFile.getInputStream()){
                 Files.copy(inputStream, destinationFile, StandardCopyOption.REPLACE_EXISTING);
             }
-        
-            return filename;
 
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to store file.", e);
+            DataFile dataFile = new DataFile(destinationFile);
+            return dataFile;
+        }catch(Exception e){
+            throw new RuntimeException("filed uploadobject function");
         }
-    }
-
-    @Override
-    public List<String> saveMultiFile(List<MultipartFile> files){
-        List<String> filenames = new ArrayList<>();
-
-        for(MultipartFile file: files){
-            filenames.add(saveFile(file));
-        }
-        return filenames;
     }
 
     @Override
@@ -164,42 +165,4 @@ public class StorageServiceImp implements IStorageService{
         }
         return "/other";
     }
-
-    @Override
-    public DataFile uploadToObj(MultipartFile multipartFile) {
-        if(multipartFile.isEmpty()){
-            throw new RuntimeException("this file is empty");
-        }
-        try{
-            String originalFilename = StringUtils.cleanPath(multipartFile.getOriginalFilename());
-            String filename = originalFilename;
-            String fileType = getFileType(originalFilename);
-
-            Path destinationDirectory = Paths.get(root).resolve(fileType).normalize().toAbsolutePath();
-            Files.createDirectories(destinationDirectory);
-
-            //checks if the file exists and appends an incremental number to filename
-            int counter = 1;
-            Path destinationFile = destinationDirectory.resolve(filename).normalize().toAbsolutePath();
-            while(Files.exists(destinationFile)){
-                int lastDotIndex = originalFilename.lastIndexOf(".");
-                String filenameWithoutExtension = (lastDotIndex != -1) ? originalFilename.substring(0, lastDotIndex) : originalFilename;
-                String fileExtension = (lastDotIndex != -1) ? originalFilename.substring(lastDotIndex) : "";
-                filename = filenameWithoutExtension+"("+counter+")"+fileExtension;
-                destinationFile = destinationDirectory.resolve(filename).normalize().toAbsolutePath();
-                counter++;
-            }
-
-            try(InputStream inputStream = multipartFile.getInputStream()){
-                Files.copy(inputStream, destinationFile, StandardCopyOption.REPLACE_EXISTING);
-            }
-
-            DataFile dataFile = new DataFile(destinationFile);
-            return dataFile;
-        }catch(IOException e){
-            throw new RuntimeException("filed uploadobject function");
-        }
-
-    }
-    
 }

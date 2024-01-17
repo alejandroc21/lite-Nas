@@ -8,9 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.alejandroct.nas.model.DataFile;
 
 public interface IStorageService {
-    List<String> listFolderFiles(String folderName);
-    String saveFile(MultipartFile file);
-    List<String> saveMultiFile(List<MultipartFile> files);
+    List<DataFile> listFolderFiles(String folderName);
     Resource loadFile(String filename);
-    DataFile uploadToObj(MultipartFile multipartFile);
+    List<DataFile> saveListFiles(List<MultipartFile> files);
 }
