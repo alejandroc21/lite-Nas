@@ -1,12 +1,193 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@500&display=swap');
 *{
     padding: 0;
     margin: 0;
     box-sizing: border-box;
+    font-family: 'Outfit', sans-serif;
 }
 
 body{
     display: grid;
-    grid-template-columns: 1fr 4fr;
+    grid-template-columns: 1fr 5fr;
     height: 100vh;
+    width: 100%;
+    background-color: #faf3f3;
 }
 
+.sidebar{
+    box-shadow: 0 0 10px 0 #6e6e75;
+    padding: 10px;
+    font-size: 20px;
+}
+
+.name{
+    text-align: center;
+    margin-top: 35px;
+    cursor: default;
+}
+
+.navigation{
+    margin-top: 50px;
+}
+
+.sidebar .navigation li{
+    list-style: none;
+    display: flex;
+    margin-bottom: 5px;
+}
+
+.sidebar .navigation .btn-black{
+    padding-left: 40%;
+    background-color: #000;
+    color: #fff;
+}
+
+.sidebar .navigation .btn-black:hover{
+    transform: scale(1.02);
+    background-color: #000;
+    color: #fff;
+}
+
+.sidebar .navigation button{
+    width: 100%;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    padding-left: 30px;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 3px 3px 7px rgb(138, 135, 135);
+    color: #6a6a6b;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.sidebar .navigation button:active{
+    transform: scale(0.98);
+}
+
+.sidebar .navigation button:hover{
+    background-color: #9c99999c;
+    color: #000;
+}
+
+.sidebar .navigation span{
+    margin-right: 10px;
+}
+
+header > h1{
+    font-size: 30px;
+}
+
+header > hr{
+    height: 4px;
+    background-color: #000;
+}
+
+.files{
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 15px;  
+    padding: 15px;
+}
+
+.card{
+    width: 100%;
+    border-radius: 5px;
+    box-shadow: 4px 4px 10px rgb(138, 135, 135);
+    display: grid;
+    grid-template-rows: 80% auto;
+    align-items: center;
+    justify-items: center;
+    cursor: pointer;
+}
+
+.card:hover{
+    transform: scale(1.03);
+}
+
+.card >img{
+    width: 60%;
+    padding: 10px auto;
+}
+
+.card > h3{
+    text-align: center;
+    font-size: 1rem;
+}
+
+main{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.container{
+    display: none;
+    height: 100%;
+    width: 100%;
+}
+
+.header{
+    margin: 10px 20px;
+    cursor: default;
+}
+
+.drop-area{
+    border: 5px dashed #ddd;
+    height: 25em;
+    width: 35em;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.drop-area.active{
+    background: #b8d4fe;
+    border: 2px dashed #618ac9;
+}
+
+.drop-area > h2{
+    font-size: 25px;
+    font-weight: 500;
+}
+
+.drop-area > span{
+    font-size: 20px;
+}
+
+.drop-area > button{
+    padding: 10px 25px;
+    font-size: 20px;
+    border: 0;
+    outline: none;
+    background-color: #5256ad;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 10px;
+}
+
+.file-container{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border: solid 1px #ddd;
+}
+
+#preview{
+    margin-top: 10px;
+}
+
+.success{
+    color: #52ad5a;
+}
+
+.failure{
+    color: #ff0000;
+}

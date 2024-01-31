@@ -11,4 +11,5 @@ public interface IStorageService {
     List<DataFile> listFolderFiles(String folderName);
     Resource loadFile(String filename);
     List<DataFile> saveListFiles(List<MultipartFile> files);
+    DataFile saveFile(MultipartFile file);
 }

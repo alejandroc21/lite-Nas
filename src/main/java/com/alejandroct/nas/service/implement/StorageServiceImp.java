@@ -42,13 +42,11 @@ public class StorageServiceImp implements IStorageService{
         if (!Files.exists(directory)) {
             throw new DirectoryNotFoundException("Directory does not exist: "+fileType);
         }
-        List<String> fileNames = new ArrayList<>();
         List<DataFile> dataFiles = new ArrayList<>();
         try(DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory)){
             for(Path path : directoryStream){
                 if(Files.isRegularFile(path)){
                     dataFiles.add(new DataFile(path));
-                    fileNames.add(path.getFileName().toString());
                 }
             }
         }catch(IOException e){
@@ -115,7 +113,7 @@ public class StorageServiceImp implements IStorageService{
             String fileType = getFileType(filename);
             Path file;
 
-            if(filename.contains("/icon_")){
+            if(filename.contains("icon_")){
                 file = Paths.get("src/main/resources/static/image/").resolve(filename);
             }else{
                 file = Paths.get(root+"/"+fileType).resolve(filename);
@@ -142,7 +140,6 @@ public class StorageServiceImp implements IStorageService{
     }
 
     private void createDirectories(){
-        //This is just a temporal solution, trust me
         try {
             Files.createDirectories(Paths.get(root).resolve("images").normalize().toAbsolutePath());
             Files.createDirectories(Paths.get(root).resolve("music").normalize().toAbsolutePath());

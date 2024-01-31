@@ -1,16 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lite:Nas</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
-    <form>
-        <input type="file" id="fileInput">
-        <button type="button" onclick="uploadFiles()">Send file</button>
-    </form>
+    <div class="sidebar">
+
+        <div class="name">
+            <h1>Lite:Nas</h1>
+        </div>
+
+        <nav class="navigation">
+            <ul>
+                <li>
+                    <button type="button" class="btn-black" href="#" onclick="showUpload()">Upload</button>
+                </li>
+                <li>
+                    <button type="button" onclick="listFiles('images')"><span class="icon">&#128247;</span>Images</button>
+                </li>
+                <li>
+                    <button type="button" onclick="listFiles('documents')"><span class="icon">&#128451;</span>Documents</button>
+                </li>
+                <li>
+                    <button type="button" onclick="listFiles('videos')"><span class="icon">&#127916;</span>Videos</button>
+                </li>
+                <li>
+                    <button type="button" onclick="listFiles('music')"><span class="icon">&#127925;</span>Music</button>
+                </li>
+                <li>
+                    <button type="button" onclick="listFiles('other')"><span class="icon">&#128193;</span>Other</button>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <main>
+        <div class="upload-files" >
+            <div class="drop-area">
+                <h2>Drop your files here</h2>
+                <span>or</span>
+                <button type="button">Select files</button>
+                <input type="file" id="input-file" hidden multiple>
+            </div>
+            <div id="preview"></div>
+        </div>
+
+        <div class="container"> 
+            <header>
+                <h1 class="header"></h1>
+                <hr>
+            </header>
+
+            <div class="files"></div>
+        </div>
+    </main>
+
     <script src="js/main.js"></script>
 </body>
 </html>

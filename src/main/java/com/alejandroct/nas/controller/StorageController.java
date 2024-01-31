@@ -3,7 +3,6 @@ package com.alejandroct.nas.controller;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -28,10 +27,16 @@ import lombok.AllArgsConstructor;
 public class StorageController {
     private final IStorageService storageService;
 
-    @PostMapping("/upload")
+    @PostMapping("/upload-list")
     public ResponseEntity<List<DataFile>> saveListFiles(@RequestParam("file")List<MultipartFile> files){
         return new ResponseEntity<>(storageService.saveListFiles(files), HttpStatus.OK);
     }
+
+    @PostMapping("/upload")
+    public ResponseEntity<DataFile> saveSingleFile(@RequestParam("file")MultipartFile file){
+        return new ResponseEntity<>(storageService.saveFile(file), HttpStatus.OK);
+    }
+
 
     @GetMapping("{filename:.+}")
     public ResponseEntity<Resource> getFile(@PathVariable String filename) throws IOException{
@@ -42,8 +47,6 @@ public class StorageController {
 
     @GetMapping("/list/{fileType}")
     public ResponseEntity<List<DataFile>> listFiles(@PathVariable String fileType){
-        // List<String> fileNames = storageService.listFolderFiles(fileType);
-        // return ResponseEntity.ok(Map.of("files", fileNames));
         return new ResponseEntity<>(storageService.listFolderFiles(fileType), HttpStatus.OK);
     }
 
