@@ -28,7 +28,6 @@ public class StorageServiceImp implements IStorageService{
     
     String root = "src/main/resources/media";
     private Map<String, String> filesExtension;
-    long maxSize=100*1024*1024;
 
     @PostConstruct
     public void init(){
@@ -71,12 +70,6 @@ public class StorageServiceImp implements IStorageService{
                 throw new RuntimeException("this file is empty");
             }
 
-            long fileSize = multipartFile.getSize();
-
-            if(fileSize>=maxSize){
-                throw new RuntimeException("File size exceeds limit.");
-            }
-
             String originalFilename = StringUtils.cleanPath(multipartFile.getOriginalFilename());
             String filename = originalFilename;
             String fileType = getFileType(originalFilename);
@@ -103,7 +96,7 @@ public class StorageServiceImp implements IStorageService{
             DataFile dataFile = new DataFile(destinationFile);
             return dataFile;
         }catch(Exception e){
-            throw new RuntimeException("filed uploadobject function");
+            throw new RuntimeException("failed to saveFile");
         }
     }
 
@@ -160,6 +153,6 @@ public class StorageServiceImp implements IStorageService{
                 }
             }
         }
-        return "/other";
+        return "other";
     }
 }

@@ -18,16 +18,19 @@
         <nav class="navigation">
             <ul>
                 <li>
-                    <button type="button" class="btn-black" href="#" onclick="showUpload()">Upload</button>
+                    <button type="button" class="btn-black" onclick="showUpload()">Upload</button>
                 </li>
                 <li>
-                    <button type="button" onclick="listFiles('images')"><span class="icon">&#128247;</span>Images</button>
+                    <button type="button" onclick="listFiles('images')"><span
+                            class="icon">&#128247;</span>Images</button>
                 </li>
                 <li>
-                    <button type="button" onclick="listFiles('documents')"><span class="icon">&#128451;</span>Documents</button>
+                    <button type="button" onclick="listFiles('documents')"><span
+                            class="icon">&#128451;</span>Documents</button>
                 </li>
                 <li>
-                    <button type="button" onclick="listFiles('videos')"><span class="icon">&#127916;</span>Videos</button>
+                    <button type="button" onclick="listFiles('videos')"><span
+                            class="icon">&#127916;</span>Videos</button>
                 </li>
                 <li>
                     <button type="button" onclick="listFiles('music')"><span class="icon">&#127925;</span>Music</button>
@@ -40,7 +43,7 @@
     </div>
 
     <main>
-        <div class="upload-files" >
+        <div class="upload-files">
             <div class="drop-area">
                 <h2>Drop your files here</h2>
                 <span>or</span>
@@ -50,7 +53,7 @@
             <div id="preview"></div>
         </div>
 
-        <div class="container"> 
+        <div class="container">
             <header>
                 <h1 class="header"></h1>
                 <hr>
@@ -60,6 +63,15 @@
         </div>
     </main>
 
+    <dialog id="modal">
+        <h2>name</h2>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum libero aspernatur reprehenderit sequi nemo
+            soluta, ipsum odit recusandae, autem placeat aliquam qui facilis officiis commodi quae nulla laborum minus
+            sapiente.</p>
+        <button type="button" onclick="closeModal()">close</button>
+    </dialog>
+
     <script src="js/main.js"></script>
 </body>
+
 </html>

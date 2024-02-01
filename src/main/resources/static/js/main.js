@@ -3,10 +3,11 @@ const filesPage = document.querySelector('.files');
 const uploadFiles = document.querySelector('.upload-files');
 const container = document.querySelector('.container');
 const preview = document.querySelector('#preview');
+let data = [];
 
 async function listFiles(folder) {
     const res = await fetch("media/list/" + folder);
-    const data = await res.json();
+    data = await res.json();
     container.style.display = 'block';
     filesPage.innerHTML = '';
     preview.innerHTML = '';
@@ -20,6 +21,10 @@ async function listFiles(folder) {
         const card = document.createElement('div');
         card.className = 'card';
         card.id = index;
+
+        card.onclick = function(){
+            openModal(this.id);
+        }
 
         const img = document.createElement('img');
         img.src = element.logo;
@@ -78,7 +83,6 @@ function showFiles(files) {
     for (const file of files) {
         uploadFile(file);
     }
-
 }
 
 async function uploadFile(file) {
@@ -96,9 +100,14 @@ async function uploadFile(file) {
             method: 'POST',
             body: formData,
         });
-
-        fileState.textContent = "Upload success";
-        fileState.classList.add('success');
+        if(response.status===413){
+            const message = await response.json();
+            fileState.textContent = message.ERROR;    
+            fileState.classList.add('failure');
+        }else{
+            fileState.textContent = "Upload success";
+            fileState.classList.add('success');
+        }
 
     } catch {
         fileState.textContent = "Fail to Upload";
@@ -107,4 +116,24 @@ async function uploadFile(file) {
 
     cardFile.append(fileName, fileState);
     preview.append(cardFile);
+}
+
+function prueba(id){
+    console.log(id);
+}
+
+const modal = document.querySelector('#modal');
+const nameModal = modal.querySelector('h2');
+
+
+function openModal(id){
+    modal.showModal();
+    console.log(data[id]);
+    nameModal.textContent = data[id].name;
+    const image = modal.createElement('img');
+    image.src = data[id].url;
+}
+
+function closeModal(){
+    modal.close();
 }
