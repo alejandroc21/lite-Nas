@@ -1,5 +1,6 @@
 package com.alejandroct.nas.exception;
 
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,7 +17,7 @@ public class GlobalExceptionHandler {
     private String maxFileSize;
 
     @ExceptionHandler(DirectoryNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleDirectorynotFoundException(RuntimeException e){
+    public ResponseEntity<Map<String, String>> handleDirectorynotFoundException(DirectoryNotFoundException e){
         Map<String, String> response = new HashMap<>();
         response.put("ERROR", e.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
@@ -27,6 +28,13 @@ public class GlobalExceptionHandler {
         Map<String, String> response = new HashMap<>();
         response.put("ERROR", "The maximum size supported is: " + maxFileSize);
         return new ResponseEntity<>(response, HttpStatus.PAYLOAD_TOO_LARGE);
+    }
+
+    @ExceptionHandler(FileNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleFileNotFoundException(FileNotFoundException e){
+        Map<String, String> response = new HashMap<>();
+        response.put("ERROR", e.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
 }

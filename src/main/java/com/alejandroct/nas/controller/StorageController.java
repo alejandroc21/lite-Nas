@@ -1,5 +1,6 @@
 package com.alejandroct.nas.controller;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
@@ -8,6 +9,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,7 +39,6 @@ public class StorageController {
         return new ResponseEntity<>(storageService.saveFile(file), HttpStatus.OK);
     }
 
-
     @GetMapping("{filename:.+}")
     public ResponseEntity<Resource> getFile(@PathVariable String filename) throws IOException{
         Resource file = storageService.loadFile(filename);
@@ -50,4 +51,8 @@ public class StorageController {
         return new ResponseEntity<>(storageService.listFolderFiles(fileType), HttpStatus.OK);
     }
 
+    @DeleteMapping("{filename:.+}")
+    public ResponseEntity<String> deleteFile(@PathVariable String filename)throws FileNotFoundException{
+        return ResponseEntity.ok(storageService.deleteFile(filename));
+    }
 }

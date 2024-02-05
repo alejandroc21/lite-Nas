@@ -63,12 +63,34 @@
         </div>
     </main>
 
-    <dialog id="modal">
-        <h2>name</h2>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum libero aspernatur reprehenderit sequi nemo
-            soluta, ipsum odit recusandae, autem placeat aliquam qui facilis officiis commodi quae nulla laborum minus
-            sapiente.</p>
-        <button type="button" onclick="closeModal()">close</button>
+    <dialog class="modal" id="modal">
+        <div id="file-content"></div>
+        <div id="description">
+            <div id="frame">
+                <button type="button" onclick="closeModal()">X</button>
+            </div>
+            <div id="details">
+                <strong>Name:</strong>
+                <span id="detail-name"></span>
+                <strong>Creation date:</strong>
+                <span id="detail-date"></span>
+                <strong>Size:</strong>
+                <span id="detail-size"></span>
+            </div>
+            <div id="options">
+                <button type="button" id="btn-download"><img id="img-download" src="./image/download.png"></button>
+                <button type="button" id="btn-delete"><img id="img-delete" src="./image/delete.png"></button>
+            </div>
+        </div>
+    </dialog>
+
+    <dialog class="modal" id="modal-delete">
+        <h2>Are you sure to delete this file?</h2>
+        <span>this action is permanent</span>
+        <div id="modal-confirm">
+            <button type="button" id="btn-yes">Yes</button>
+            <button type="button" id="btn-not">No</button>
+        </div>
     </dialog>
 
     <script src="js/main.js"></script>

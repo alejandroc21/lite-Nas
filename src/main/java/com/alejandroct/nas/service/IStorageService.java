@@ -1,5 +1,6 @@
 package com.alejandroct.nas.service;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 
 import org.springframework.core.io.Resource;
@@ -12,4 +13,5 @@ public interface IStorageService {
     Resource loadFile(String filename);
     List<DataFile> saveListFiles(List<MultipartFile> files);
     DataFile saveFile(MultipartFile file);
+    String deleteFile(String filename)throws FileNotFoundException;
 }

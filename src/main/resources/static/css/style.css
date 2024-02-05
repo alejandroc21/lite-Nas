@@ -9,7 +9,7 @@
 
 body {
     display: grid;
-    grid-template-columns: 1fr 5fr;
+    grid-template-columns: 15% 85%;
     height: 100vh;
     width: 100%;
     background-color: #faf3f3;
@@ -87,14 +87,16 @@ header>hr {
 
 .files {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    /* grid-template-columns: repeat(6, 1fr); */
+    grid-template-columns: repeat(5, 18%);
     grid-template-rows: repeat(4, 1fr);
     gap: 15px;
+    margin-left: 10px;
     padding: 15px;
 }
 
 .card {
-    width: 100%;
+    width: 95%;
     height: 8em;
     border-radius: 5px;
     box-shadow: 4px 4px 10px rgb(138, 135, 135);
@@ -117,7 +119,7 @@ header>hr {
 .card>h3 {
     text-align: center;
     font-size: 0.93rem;
-
+    margin: 0 6px;
     width: 170px;
     white-space: nowrap;
     overflow: hidden;
@@ -208,11 +210,185 @@ main {
 }
 
 #modal {
-    max-width: 30%;
+    width: 55%;
+    height: 60%;
+    max-height: 400px;
+    border-radius: 15px;
+    background-color: #000;
+}
+
+.modal {
     top: 50%;
     left: 50%;
     -webkit-transform: translateX(-50%) translateY(-50%);
     -moz-transform: translateX(-50%) translateY(-50%);
     -ms-transform: translateX(-50%) translateY(-50%);
     transform: translateX(-50%) translateY(-50%);
+}
+
+#file-content video {
+    width: 100%;
+    height: 100%;
+}
+
+#file-content .img-file {
+    filter: brightness(0) invert(1);
+    width: 50%;
+    height: auto;
+}
+
+#file-content audio {
+    width: 90%;
+    margin: 30px 0 -20px 0;
+    background-color: #fff;
+    border-radius: 5px;
+    border: 1px solid #fff;
+}
+
+#file-content {
+    width: 60%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+#file-content img {
+    max-width: 440px;
+    max-height: 390px;
+}
+
+#description {
+    width: 40%;
+    background-color: #eee;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#frame {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+}
+
+#frame button {
+    width: 1.7rem;
+    height: 1.7rem;
+    margin: 7px 7px 0 0;
+    border-radius: 25px;
+    border: none;
+    background-color: #555555;
+    color: white;
+    transition-duration: 0.2s;
+    cursor: pointer;
+}
+
+#frame button:hover {
+    transform: scale(1.1);
+    background-color: #eee;
+    color: black;
+    border: 2px solid #555555;
+}
+
+#details {
+    display: flex;
+    flex-direction: column;
+    margin: 0 10px;
+}
+
+#details span {
+    margin-bottom: 15px;
+    color: #3b3838;
+    width: 96%;
+    word-wrap: break-word;
+}
+
+#options {
+    margin: 0 5% 5%;
+    display: flex;
+    justify-content: space-around;
+}
+
+#btn-download {
+    padding: 0.5em 0;
+    border: none;
+    border-radius: 5px;
+    background-color: #313131;
+    transition-duration: 0.1s;
+    cursor: pointer;
+    width: 70%;
+}
+
+#btn-download:hover {
+    transform: scale(0.97);
+}
+
+#img-download {
+    filter: brightness(0) invert(1);
+    width: 12%;
+    height: auto;
+}
+
+#btn-delete {
+    padding: 0.5em 0;
+    border: none;
+    border-radius: 5px;
+    background-color: rgb(119, 10, 10);
+    cursor: pointer;
+    width: 20%;
+}
+
+#btn-delete:hover {
+    transform: scale(0.97);
+}
+
+#img-delete {
+    filter: brightness(0) invert(1);
+    width: 32%;
+    height: auto;
+}
+
+#modal-delete {
+    width: 35%;
+    height: 30%;
+    max-height: 200px;
+    border-radius: 15px;
+    background-color: #eee;
+    text-align: center;
+}
+
+#modal-delete h2 {
+    margin-top: 10%;
+}
+
+#modal-delete span {
+    color: #313131;
+}
+
+#modal-confirm {
+    margin-top: 5%;
+}
+
+#modal-delete button {
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    width: 60px;
+    height: 30px;
+    border-radius: 5px;
+    margin: 0 5%;
+}
+
+#modal-delete button:hover {
+    transform: scale(1.09);
+}
+
+#btn-yes {
+    background-color: rgb(119, 10, 10);
+}
+
+#btn-not {
+    background-color: #313131;
 }

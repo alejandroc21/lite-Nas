@@ -3,9 +3,11 @@ const filesPage = document.querySelector('.files');
 const uploadFiles = document.querySelector('.upload-files');
 const container = document.querySelector('.container');
 const preview = document.querySelector('#preview');
+let folderFiles;
 let data = [];
 
 async function listFiles(folder) {
+    folderFiles = folder;
     const res = await fetch("media/list/" + folder);
     data = await res.json();
     container.style.display = 'block';
@@ -22,7 +24,7 @@ async function listFiles(folder) {
         card.className = 'card';
         card.id = index;
 
-        card.onclick = function(){
+        card.onclick = function () {
             openModal(this.id);
         }
 
@@ -85,6 +87,9 @@ function showFiles(files) {
     }
 }
 
+/* Changed fetch method for XMLHttpRequest because cause fetch does not
+ * provide a progress event */
+
 async function uploadFile(file) {
     const formData = new FormData();
     formData.append('file', file);
@@ -94,46 +99,200 @@ async function uploadFile(file) {
     const fileName = document.createElement('h3');
     fileName.textContent = file.name;
     const fileState = document.createElement('span');
-
-    try {
-        const response = await fetch("/media/upload", {
-            method: 'POST',
-            body: formData,
-        });
-        if(response.status===413){
-            const message = await response.json();
-            fileState.textContent = message.ERROR;    
-            fileState.classList.add('failure');
-        }else{
-            fileState.textContent = "Upload success";
-            fileState.classList.add('success');
-        }
-
-    } catch {
-        fileState.textContent = "Fail to Upload";
-        fileState.classList.add('failure');
-    }
-
-    cardFile.append(fileName, fileState);
+    cardFile.append(fileName);
     preview.append(cardFile);
-}
 
-function prueba(id){
-    console.log(id);
+    const progressBar = document.createElement('progress');
+    progressBar.value = 0;
+    progressBar.max = 100;
+    preview.append(progressBar);
+
+    const xhr = new XMLHttpRequest();
+
+    xhr.upload.addEventListener('progress', function (event) {
+        if (event.lengthComputable) {
+            const percentComplete = (event.loaded / event.total) * 100;
+            progressBar.value = percentComplete;
+        }
+    });
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) {
+                fileState.textContent = "Upload success";
+                fileState.classList.add('success');
+
+            } else if (xhr.status === 413) {
+                const message = JSON.parse(xhr.responseText);
+                fileState.textContent = message.ERROR;
+                fileState.classList.add('failure');
+                
+            } else {
+                fileState.textContent = "Fail to Upload";
+                fileState.classList.add('failure');
+            }
+            progressBar.remove();
+            cardFile.append(fileState);
+        }
+    };
+
+    xhr.open('POST', '/media/upload');
+    xhr.send(formData);
 }
 
 const modal = document.querySelector('#modal');
-const nameModal = modal.querySelector('h2');
+const fileContent = document.querySelector('#file-content');
+const description = document.querySelector('#description');
+const options = description.querySelector('#options');
 
-
-function openModal(id){
+function openModal(id) {
     modal.showModal();
-    console.log(data[id]);
-    nameModal.textContent = data[id].name;
-    const image = modal.createElement('img');
-    image.src = data[id].url;
+    modal.style.display = 'flex';
+    showDataFile(id);
 }
 
-function closeModal(){
-    modal.close();
+async function showDataFile(id) {
+    const fileURL = data[id].url;
+    fileContent.innerHTML = '';
+
+    try {
+        const res = await fetch(fileURL);
+        const contentType = res.headers.get('content-Type');
+
+        if (contentType.startsWith('image/')) {
+            const image = document.createElement('img');
+            image.src = fileURL;
+            fileContent.append(image);
+
+        } else if (contentType.startsWith('video/')) {
+            const video = document.createElement("video");
+            video.setAttribute("controls", "true");
+
+            const source = document.createElement("source");
+            source.setAttribute("src", fileURL);
+            source.setAttribute("type", contentType);
+
+            video.appendChild(source);
+            fileContent.append(video);
+
+        } else if (contentType.startsWith('audio/')) {
+            const audio = document.createElement("audio");
+            audio.setAttribute("controls", "true");
+
+            const source = document.createElement("source");
+            source.setAttribute("src", fileURL);
+            source.setAttribute("type", contentType);
+
+            const image = document.createElement('img');
+            image.src = data[id].logo;
+            image.className = "img-file";
+            fileContent.append(image);
+
+            audio.appendChild(source);
+            fileContent.append(audio);
+
+        } else {
+            const image = document.createElement('img');
+            image.src = data[id].logo;
+            image.className = "img-file";
+            fileContent.append(image);
+        }
+
+        const name = description.querySelector('#detail-name');
+        const date = description.querySelector('#detail-date');
+        const size = description.querySelector('#detail-size');
+        const fileDate = new Date(data[id].creationDate);
+
+        name.textContent = data[id].name;
+        date.textContent = fileDate.toLocaleString();
+        size.textContent = bytesToSize(data[id].bytesSize);
+
+        const downloadButton = options.querySelector('#btn-download');
+        const buttonDelete = options.querySelector('#btn-delete');
+
+        downloadButton.onclick = function () {
+            downloadFile(id);
+        }
+
+        buttonDelete.onclick = function () {
+            openModalDelete(id);
+        }
+    } catch (error) {
+        console.error(error);
+    }
 }
+
+window.addEventListener('click', (event) => {
+    if (event.target === modal) {
+        closeModal();
+    }
+});
+
+window.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+        closeModal();
+    }
+});
+
+function closeModal() {
+    modal.close();
+    modal.style.display = 'none';
+    fileContent.innerHTML = '';
+}
+
+function bytesToSize(bytes) {
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    if (bytes === 0) return 'n/a';
+    const i = parseInt(Math.floor(Math.log(Math.abs(bytes)) / Math.log(1024)), 10);
+    if (i === 0) return `${bytes} ${sizes[i]}`;
+    return `${(bytes / (1024 ** i)).toFixed(2)} ${sizes[i]}`;
+}
+
+function downloadFile(id) {
+    fetch(data[id].url).then(response => response.blob())
+        .then(blob => {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = data[id].name;
+            document.body.appendChild(a);
+            a.click();
+            URL.revokeObjectURL(url);
+
+        }).catch(error => console.error(error));
+}
+
+const modalDelete = document.querySelector('#modal-delete');
+const btnYes = modalDelete.querySelector('#btn-yes');
+const btnNot = modalDelete.querySelector('#btn-not');
+
+function openModalDelete(id) {
+    btnYes.onclick = function () {
+        confirmDelete(id);
+    }
+    modalDelete.showModal();
+}
+
+function confirmDelete(id) {
+    fetch(data[id].url, {
+        method: 'DELETE',
+    })
+        .then(response => response.text())
+        .then(res => {
+            console.log(res);
+            modalDelete.close();
+            closeModal();
+        })
+        .catch(error => console.error(error));
+    listFiles(folderFiles);
+}
+
+btnNot.addEventListener('click', (e) => {
+    modalDelete.close();
+});
+
+window.addEventListener('click', (event) => {
+    if (event.target === modalDelete) {
+        modalDelete.close();
+    }
+});
