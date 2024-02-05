@@ -161,11 +161,10 @@ public class StorageServiceImp implements IStorageService {
 
     private void createDirectories() {
         try {
-            Files.createDirectories(Paths.get(root).resolve("images").normalize().toAbsolutePath());
-            Files.createDirectories(Paths.get(root).resolve("music").normalize().toAbsolutePath());
-            Files.createDirectories(Paths.get(root).resolve("videos").normalize().toAbsolutePath());
-            Files.createDirectories(Paths.get(root).resolve("documents").normalize().toAbsolutePath());
-            Files.createDirectories(Paths.get(root).resolve("other").normalize().toAbsolutePath());
+            for (Map.Entry<String, String> entry : filesExtension.entrySet()) {
+                String directoryName = entry.getKey();
+                Files.createDirectories(Paths.get(root).resolve(directoryName).normalize().toAbsolutePath());
+            }
         } catch (Exception e) {
             throw new RuntimeException("Failed to create base directories.");
         }
@@ -187,7 +186,7 @@ public class StorageServiceImp implements IStorageService {
     public String deleteFile(String filename) throws FileNotFoundException {
         String fileType = getFileType(filename);
         Path file = Paths.get(root + "/" + fileType).resolve(filename);
-        
+
         try {
             Files.delete(file);
         } catch (IOException e) {
