@@ -126,7 +126,7 @@ async function uploadFile(file) {
                 const message = JSON.parse(xhr.responseText);
                 fileState.textContent = message.ERROR;
                 fileState.classList.add('failure');
-                
+
             } else {
                 fileState.textContent = "Fail to Upload";
                 fileState.classList.add('failure');
@@ -144,6 +144,9 @@ const modal = document.querySelector('#modal');
 const fileContent = document.querySelector('#file-content');
 const description = document.querySelector('#description');
 const options = description.querySelector('#options');
+const detailName = document.querySelector('#detail-name');
+const detailDate = document.querySelector('#detail-date');
+const detailSize = document.querySelector('#detail-size');
 
 function openModal(id) {
     modal.showModal();
@@ -156,7 +159,13 @@ async function showDataFile(id) {
     fileContent.innerHTML = '';
 
     try {
-        const res = await fetch(fileURL);
+        const res = await fetch(fileURL,{
+        method: 'GET',
+        headers: {
+          'Range': 'bytes=0-1'
+        }
+        });
+
         const contentType = res.headers.get('content-Type');
 
         if (contentType.startsWith('image/')) {
@@ -235,9 +244,12 @@ window.addEventListener('keydown', (event) => {
 });
 
 function closeModal() {
+    detailName.innerHTML = '';
+    detailDate.innerHTML = '';
+    detailSize.innerHTML = '';
+    fileContent.innerHTML = '';
     modal.close();
     modal.style.display = 'none';
-    fileContent.innerHTML = '';
 }
 
 function bytesToSize(bytes) {

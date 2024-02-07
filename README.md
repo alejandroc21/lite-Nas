@@ -14,7 +14,7 @@ spring.servlet.multipart.max-request-size=100MB
 * We can choose the folders that are created and the type of data that each one will admit from `StorageServiceImp.java`.
 By default we find these, the undefined extension files will be saved in the "other" directory.
 
-```
+```java
 private void initFilesExtension() {
         filesExtension = new HashMap<>();
         filesExtension.put("images", "jpg, jpeg, png, gif");
